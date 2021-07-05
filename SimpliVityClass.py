@@ -52,7 +52,13 @@ class Simplivity:
             pass # Implement svterror class & raise an svterror here
         pass
 
-    
+    def GetHost(self, name=None):
+        if name:
+            url = self.url+'hosts?show_optional_fields=true&name='+name
+        else:
+            url = self.url+'hosts'
+        return self.doGet(url) #use state in this return item to check if host is powered on
+
 
 
 
