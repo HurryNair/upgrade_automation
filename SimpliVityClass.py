@@ -3,7 +3,7 @@ import datetime
 
 DEBUG = False
 
-class Simplivity:
+class SimpliVity:
 
     def __init__(self, url):
         self.url = url
@@ -58,6 +58,41 @@ class Simplivity:
         else:
             url = self.url+'hosts'
         return self.doGet(url) #use state in this return item to check if host is powered on
+
+    def GetHostId(self, name=None):
+        for x in self.GetHost(name)['hosts']:
+            if x['state'] == 'ALIVE':
+                return x['id']
+        
+    def GetHostCapacity(self, name, timerange='43200', resolution='Minute', timeOffset='0'):
+        url = self.url + 'hosts/' + self.GetHostId(name) + '/capacity?range=' + timerange + \
+            '&resolution=' + '&offset=' + timeOffset + '&show_optional_fields=true'
+        return self.doGet(url)
+
+    def GetVM(self, vmname=None):
+        if vmname:
+            url = self.url+'virtual_machines?show_optional_fields=true&name='+vmname
+        else:
+            url = self.url+'virtual_machines?show_optional_field=true'
+        return self.doGet(url)
+
+    def GetVMHA(self):
+        vms = self.GetVM()['virtual_machines']
+        for vm in vms:
+            if vm['state'] == 'ALIVE':
+                if vm['ha_status'] == 'SAFE' and vm['ha_resynchronization_progress'] == 100 and len(vm['replica_set'] == 2):
+                    return True
+                else:
+                    return False
+
+    def ShutdownOVC(self, host_id, ha_wait=True):
+        return self.doPost(self.url+'hosts/'+host_id+'/shutdown_virtual_controller')
+
+    def CancelShutdownOVC(self, host_id):
+        return self.doPost(self.url+'hosts/'+host_id+'/cancel_virtual_controller_shutdown')
+
+    def GetOVCShutdownStatus(self, host_id):
+        return self.doGet(self.url+'hosts/'+host_id+'/virtual_controller_shutdown_status')
 
 
 
