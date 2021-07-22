@@ -62,7 +62,7 @@ if __name__ == "__main__":
     url = "https://"+ovc+"/api/"
     svt = SimpliVity(url)
 
-    log = logopen('logfile3.txt')
+    log = logopen('logfile.txt')
 
     logwriter(log, "Open Connection to SimpliVity")
     svt.Connect(svtuser, svtpassword)

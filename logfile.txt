@@ -1,0 +1,50 @@
+2021-07-22 17:05:25.773664: Session start 
+2021-07-22 17:05:25.773664: Open Connection to SimpliVity 
+2021-07-22 17:05:25.916868: Connection to SimpliVity is open. Connected to OVC 10.54.106.96 
+2021-07-22 17:05:26.700962: Evaluating cluster Prod_Datacenter 
+2021-07-22 17:05:26.700962: Evaluating cluster members 
+2021-07-22 17:05:27.091345: Node 10.54.106.93 software version : Release 3.7.9.279 
+2021-07-22 17:05:27.091345: Node 10.54.106.93 status : ALIVE 
+2021-07-22 17:05:27.091345: Node 10.54.106.93 arbiter connectivity : CONNECTED 
+2021-07-22 17:05:27.091345: Arbiter IP address : 10.54.110.220 
+2021-07-22 17:05:27.091345: vCenter : 10.54.106.150 
+2021-07-22 17:05:27.091345: Evaluating cluster DR_Datacenter 
+2021-07-22 17:05:27.091345: Evaluating cluster members 
+2021-07-22 17:05:27.481973: Node 10.54.106.101 software version : Release 3.7.9.279 
+2021-07-22 17:05:27.481973: Node 10.54.106.101 status : ALIVE 
+2021-07-22 17:05:27.481973: Node 10.54.106.101 arbiter connectivity : CONNECTED 
+2021-07-22 17:05:27.481973: Arbiter IP address : 10.54.110.220 
+2021-07-22 17:05:27.481973: vCenter : 10.54.106.150 
+2021-07-22 17:05:27.872605: Evaluating host 10.54.106.93 
+2021-07-22 17:05:28.575726: Hostname : 10.54.106.93 free space : 5551.907912666909 GB 
+2021-07-22 17:05:28.575726: Sufficient space for the upgrade 
+2021-07-22 17:05:28.575726: Evaluating host 10.54.106.101 
+2021-07-22 17:05:29.310107: Hostname : 10.54.106.101 free space : 2686.6967308036983 GB 
+2021-07-22 17:05:29.310107: Sufficient space for the upgrade 
+2021-07-22 17:05:29.450736: Evaluating VM rapdr_clone 
+2021-07-22 17:05:29.716357: VM storage high availability is not safe for VMrapdr_clone. VM could go offline. Do not proceed. 
+2021-07-22 17:05:29.716357: Evaluating VM Windows2016 test 
+2021-07-22 17:05:29.997611: VM storage high availability is not safe for VMWindows2016 test. VM could go offline. Do not proceed. 
+2021-07-22 17:05:29.997611: Evaluating VM VCSA-PRD-6.7 
+2021-07-22 17:05:30.294489: VM storage high availability is not safe for VMVCSA-PRD-6.7. VM could go offline. Do not proceed. 
+2021-07-22 17:05:30.294489: Evaluating VM Ubuntu_18_server 
+2021-07-22 17:05:30.544491: VM storage high availability is not safe for VMUbuntu_18_server. VM could go offline. Do not proceed. 
+2021-07-22 17:05:30.544491: Evaluating VM SVT-RDP 
+2021-07-22 17:05:30.810119: VM storage high availability is not safe for VMSVT-RDP. VM could go offline. Do not proceed. 
+2021-07-22 17:05:30.810119: Evaluating VM Restored_RHEL-S 
+2021-07-22 17:05:31.075744: VM storage high availability is not safe for VMRestored_RHEL-S. VM could go offline. Do not proceed. 
+2021-07-22 17:05:31.075744: Evaluating VM RHEL - S-2020-15-12-00h50m04s 
+2021-07-22 17:05:31.341373: VM storage high availability is not safe for VMRHEL - S-2020-15-12-00h50m04s. VM could go offline. Do not proceed. 
+2021-07-22 17:05:31.341373: Evaluating VM Migrate_Ubuntu_50GB 
+2021-07-22 17:05:31.607005: VM storage high availability is not safe for VMMigrate_Ubuntu_50GB. VM could go offline. Do not proceed. 
+2021-07-22 17:05:31.607005: Evaluating VM Hari_Monitoring_new_DND-2021-21-06-12h50m16s 
+2021-07-22 17:05:31.872626: VM storage high availability is not safe for VMHari_Monitoring_new_DND-2021-21-06-12h50m16s. VM could go offline. Do not proceed. 
+2021-07-22 17:05:31.872626: Evaluating VM FLR_31 
+2021-07-22 17:05:32.122627: VM storage high availability is not safe for VMFLR_31. VM could go offline. Do not proceed. 
+2021-07-22 17:05:32.122627: Evaluating VM FLR-9-Restore_recovery 
+2021-07-22 17:05:32.388250: VM storage high availability is not safe for VMFLR-9-Restore_recovery. VM could go offline. Do not proceed. 
+2021-07-22 17:05:32.388250: Evaluating VM FLR-3-restore 
+2021-07-22 17:05:32.647431: VM storage high availability is not safe for VMFLR-3-restore. VM could go offline. Do not proceed. 
+2021-07-22 17:05:32.647431: Evaluating VM Arbter_113 
+2021-07-22 17:05:32.897436: VM storage high availability is not safe for VMArbter_113. VM could go offline. Do not proceed. 
+2021-07-22 17:05:32.897436: Session End 
