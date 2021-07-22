@@ -1,5 +1,3 @@
-from cryptography.fernet import *
-from lxml import etree
 from SimpliVityClass import *
 from datetime import datetime
 
@@ -48,11 +46,11 @@ def logwriter(f, text):
 
 def logopen(filename):
         f = open(filename, 'a+')
-        f.write(str(datetime.today())+": Logfile opened \n")
+        f.write(str(datetime.today())+": Session start \n")
         return f
 
 def logclose(f):
-        f.write(str(datetime.today())+": Logfile closed \n")
+        f.write(str(datetime.today())+": Session end \n")
         f.close()        
 
 if __name__ == "__main__":
@@ -64,33 +62,57 @@ if __name__ == "__main__":
     url = "https://"+ovc+"/api/"
     svt = SimpliVity(url)
 
-    log = logopen('logfile')
+    log = logopen('logfile2.txt')
 
     logwriter(log, "Open Connection to SimpliVity")
     svt.Connect(svtuser, svtpassword)
     logwriter(log, "Connection to SimpliVity is open")
 
-    ready = True
+    clusters = svt.GetCluster()['omnistack_clusters']
+
+    for cluster in clusters:
+        logwriter(log, "Evaluating cluster " + cluster['hypervisor_object_parent_name'])
+        logwriter(log, "Evaluating cluster members")
+        if cluster['arbiter_connected']:
+            arbiter_connected = "CONNECTED"
+        if not cluster['arbiter_connected']:
+            arbiter_connected = "DISCONNECTED"
+        for member in cluster['members']:
+            hosts = svt.GetHost()['hosts']
+            for host in hosts:
+                if host['id'] == member:
+                    logwriter(log, "Node " + host['name'] + " software version : " + host['version'])
+                    logwriter(log, "Node " + host['name'] + " status : " + host['state'])
+                    logwriter(log, "Node " + host['name'] + " arbiter connectivity : " + arbiter_connected)
+                    
+        logwriter(log, "Arbiter IP address : " + cluster['arbiter_address'])
+        logwriter(log, "vCenter : " + cluster['hypervisor_management_system'])
 
     hosts = svt.GetHost()['hosts']
 
     for host in hosts:
+        logwriter(log, "Evaluating host " + host['name'])
         freeSpace = getNodeCapacity(svt.GetHostCapacity(host['name'])['metrics'])['free_space']
-        if freeSpace > 80:
-            ready = False
+        if freeSpace < 100:
+            logwriter(log, "Hostname : " + host['name'] + " free space : " + str(freeSpace) + " GB")
+            logwriter(log, "Inufficient space for the upgrade")
+        elif freeSpace >= 100:
+            logwriter(log, "Hostname : " + host['name'] + " free space : " + str(freeSpace) + " GB")
+            logwriter(log, "Sufficient space for the upgrade")
+            
+    vms = svt.GetVM()['virtual_machines']
     
-    if ready:
-        logwriter(log, "Host capacity below threshold")
-    else:
-        logwriter(log, "Host capacity above threshold")
-
-    ready = ready & svt.GetVMHA()
-
-    if ready:
-        logwriter(log, "VM storage high availability is safe")
-    else:
-        logwriter(log, "VM storage high availability is not safe")
-
+    for vm in vms:
+        if vm['state'] == 'ALIVE':
+            logwriter(log, "Evaluating VM " + vm['name'])
+            vm_id = vm['id']
+            vmha = svt.GetVMbyID(vm_id)['virtual_machine']['ha_status']
+            if vmha == 'SAFE' and vm['ha_resynchronization_progress'] == 100 and len(vm['replica_set'] == 2):
+                logwriter(log, "VM storage high availability is safe for VM" + vm['name'])
+            else:
+                logwriter(log, "VM storage high availability is not safe for VM" + vm['name'] + ". VM could go offline. Do not proceed.")
+                
+    logclose(log)
     # if ready:
     #    for host in hosts:
     #        svt.ShutdownOVC(host['id'])

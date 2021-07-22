@@ -44,7 +44,7 @@ class SimpliVity:
             'username': hms_username,
             'password': hms_password})
         if(response.status_code == 200):
-            self.access_token = response.json['access_token']
+            self.access_token = response.json()['access_token']
             self.headers = {'Authorization': 'Bearer ' + self.access_token,
                             'Accept': self.jsonversion}
             return response
@@ -71,20 +71,15 @@ class SimpliVity:
 
     def GetVM(self, vmname=None):
         if vmname:
-            url = self.url+'virtual_machines?show_optional_fields=true&name='+vmname
+            url = self.url+'virtual_machines?show_optional_fields=false&name='+vmname
         else:
-            url = self.url+'virtual_machines?show_optional_field=true'
+            url = self.url+'virtual_machines?show_optional_field=false'
         return self.doGet(url)
-
-    def GetVMHA(self):
-        vms = self.GetVM()['virtual_machines']
-        for vm in vms:
-            if vm['state'] == 'ALIVE':
-                if vm['ha_status'] == 'SAFE' and vm['ha_resynchronization_progress'] == 100 and len(vm['replica_set'] == 2):
-                    return True
-                else:
-                    return False
-
+    
+    def GetVMbyID(self, virtual_machine_id):
+        url = self.url+'virtual_machines/'+virtual_machine_id
+        return self.doGet(url)
+    
     def ShutdownOVC(self, host_id, ha_wait=True):
         return self.doPost(self.url+'hosts/'+host_id+'/shutdown_virtual_controller')
 
@@ -93,8 +88,3 @@ class SimpliVity:
 
     def GetOVCShutdownStatus(self, host_id):
         return self.doGet(self.url+'hosts/'+host_id+'/virtual_controller_shutdown_status')
-
-
-
-
-
