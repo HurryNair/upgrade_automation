@@ -50,7 +50,7 @@ def logopen(filename):
         return f
 
 def logclose(f):
-        f.write(str(datetime.today())+": Session end \n")
+        f.write(str(datetime.today())+": Session End \n")
         f.close()        
 
 if __name__ == "__main__":
@@ -62,11 +62,11 @@ if __name__ == "__main__":
     url = "https://"+ovc+"/api/"
     svt = SimpliVity(url)
 
-    log = logopen('logfile2.txt')
+    log = logopen('logfile3.txt')
 
     logwriter(log, "Open Connection to SimpliVity")
     svt.Connect(svtuser, svtpassword)
-    logwriter(log, "Connection to SimpliVity is open")
+    logwriter(log, "Connection to SimpliVity is open. Connected to OVC " + ovc)
 
     clusters = svt.GetCluster()['omnistack_clusters']
 
@@ -84,7 +84,7 @@ if __name__ == "__main__":
                     logwriter(log, "Node " + host['name'] + " software version : " + host['version'])
                     logwriter(log, "Node " + host['name'] + " status : " + host['state'])
                     logwriter(log, "Node " + host['name'] + " arbiter connectivity : " + arbiter_connected)
-                    
+
         logwriter(log, "Arbiter IP address : " + cluster['arbiter_address'])
         logwriter(log, "vCenter : " + cluster['hypervisor_management_system'])
 
@@ -111,7 +111,7 @@ if __name__ == "__main__":
                 logwriter(log, "VM storage high availability is safe for VM" + vm['name'])
             else:
                 logwriter(log, "VM storage high availability is not safe for VM" + vm['name'] + ". VM could go offline. Do not proceed.")
-                
+                    
     logclose(log)
     # if ready:
     #    for host in hosts:
@@ -128,9 +128,3 @@ if __name__ == "__main__":
     # Table
     # Cluster details
     # Represent nodes & all of its details
-
-
-
-    
-
-    
