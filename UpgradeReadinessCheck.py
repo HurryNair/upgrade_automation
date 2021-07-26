@@ -89,10 +89,14 @@ if __name__ == "__main__":
         logwriter(log, "vCenter : " + cluster['hypervisor_management_system'])
 
     hosts = svt.GetHost()['hosts']
+    host_list = []
+    space_list = []
 
     for host in hosts:
         logwriter(log, "Evaluating host " + host['name'])
+        host_list.append(host)
         freeSpace = getNodeCapacity(svt.GetHostCapacity(host['name'])['metrics'])['free_space']
+        space_list.append(str(freeSpace) + " GB")
         if freeSpace < 100:
             logwriter(log, "Hostname : " + host['name'] + " free space : " + str(freeSpace) + " GB")
             logwriter(log, "Inufficient space for the upgrade")
@@ -115,7 +119,6 @@ if __name__ == "__main__":
     logclose(log)
 
     report = open('report.html', 'w')
-    host_1 = "10.54.106.93"
     html_template = r"""
 <!doctype html>
 <html lang="en">
@@ -176,15 +179,15 @@ if __name__ == "__main__":
                               </tr>
                               <tr>
                                  <td> &nbsp; Free space</td>
-                                 <td>5551.907912666909 GB</td>
+                                 <td>{}</td>
                               </tr>
                               <tr>
                                  <td> &nbsp; Hostname-2</td>
-                                 <td>10.54.106.103</td>
+                                 <td>{}</td>
                               </tr>
                               <tr>
                                  <td> &nbsp; Free space</td>
-                                 <td>1000 GB</td>
+                                 <td>{}</td>
                               </tr>
                            </thead>
                         </table>
@@ -266,7 +269,7 @@ if __name__ == "__main__":
       <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
       <script type="text/javascript" src="app.js"></script>
    </body>
-</html>""".format(host_1)
+</html>""".format(host_list[0], space_list[0], host_list[1], space_list[1])
     report.write(html_template)
     report.close()
     # if ready:
