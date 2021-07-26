@@ -102,9 +102,9 @@ if __name__ == "__main__":
         if not cluster['arbiter_connected']:
             arbiter_connected = "DISCONNECTED"
         for member in cluster['members']:
-            logwriter(log, "Node " + map['member'][0] + " software version : " + map['member'][1])
-            logwriter(log, "Node " + map['member'][0] + " status : " + map['member'][2])
-            logwriter(log, "Node " + map['member'][0] + " arbiter connectivity : " + arbiter_connected)
+            logwriter(log, "Node " + map[member][0] + " software version : " + map[member][1])
+            logwriter(log, "Node " + map[member][0] + " status : " + map[member][2])
+            logwriter(log, "Node " + map[member][0] + " arbiter connectivity : " + arbiter_connected)
         logwriter(log, "Arbiter IP address : " + cluster['arbiter_address'])
         logwriter(log, "vCenter : " + cluster['hypervisor_management_system'])
             
