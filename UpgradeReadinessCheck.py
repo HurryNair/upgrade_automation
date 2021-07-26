@@ -68,6 +68,30 @@ if __name__ == "__main__":
     svt.Connect(svtuser, svtpassword)
     logwriter(log, "Connection to SimpliVity is open. Connected to OVC " + ovc)
 
+    hosts = svt.GetHost()['hosts']
+
+    host_list = []
+    space_list = []
+    host_version = []
+
+    map = {}
+
+    for host in hosts:
+        logwriter(log, "Evaluating host " + host['name'])
+        host_list.append(host['name'])
+        host_version = host['version']
+        freeSpace = getNodeCapacity(svt.GetHostCapacity(host['name'])['metrics'])['free_space']
+        space_list.append(str(freeSpace) + " GB")
+        map[host['id']] = [host['name']]
+        map[host['id']].append(host['version'])
+        map[host['id']].append(host['state'])
+        if freeSpace < 100:
+            logwriter(log, "Hostname : " + host['name'] + " free space : " + str(freeSpace) + " GB")
+            logwriter(log, "Inufficient space for the upgrade")
+        elif freeSpace >= 100:
+            logwriter(log, "Hostname : " + host['name'] + " free space : " + str(freeSpace) + " GB")
+            logwriter(log, "Sufficient space for the upgrade")
+
     clusters = svt.GetCluster()['omnistack_clusters']
 
     for cluster in clusters:
@@ -78,31 +102,11 @@ if __name__ == "__main__":
         if not cluster['arbiter_connected']:
             arbiter_connected = "DISCONNECTED"
         for member in cluster['members']:
-            hosts = svt.GetHost()['hosts']
-            for host in hosts:
-                if host['id'] == member:
-                    logwriter(log, "Node " + host['name'] + " software version : " + host['version'])
-                    logwriter(log, "Node " + host['name'] + " status : " + host['state'])
-                    logwriter(log, "Node " + host['name'] + " arbiter connectivity : " + arbiter_connected)
-
+            logwriter(log, "Node " + map['member'][0] + " software version : " + map['member'][1])
+            logwriter(log, "Node " + map['member'][0] + " status : " + map['member'][2])
+            logwriter(log, "Node " + map['member'][0] + " arbiter connectivity : " + arbiter_connected)
         logwriter(log, "Arbiter IP address : " + cluster['arbiter_address'])
         logwriter(log, "vCenter : " + cluster['hypervisor_management_system'])
-
-    hosts = svt.GetHost()['hosts']
-    host_list = []
-    space_list = []
-
-    for host in hosts:
-        logwriter(log, "Evaluating host " + host['name'])
-        host_list.append(host['name'])
-        freeSpace = getNodeCapacity(svt.GetHostCapacity(host['name'])['metrics'])['free_space']
-        space_list.append(str(freeSpace) + " GB")
-        if freeSpace < 100:
-            logwriter(log, "Hostname : " + host['name'] + " free space : " + str(freeSpace) + " GB")
-            logwriter(log, "Inufficient space for the upgrade")
-        elif freeSpace >= 100:
-            logwriter(log, "Hostname : " + host['name'] + " free space : " + str(freeSpace) + " GB")
-            logwriter(log, "Sufficient space for the upgrade")
             
     vms = svt.GetVM()['virtual_machines']
     
