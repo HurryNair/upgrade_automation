@@ -94,7 +94,7 @@ if __name__ == "__main__":
 
     for host in hosts:
         logwriter(log, "Evaluating host " + host['name'])
-        host_list.append(host)
+        host_list.append(host['name'])
         freeSpace = getNodeCapacity(svt.GetHostCapacity(host['name'])['metrics'])['free_space']
         space_list.append(str(freeSpace) + " GB")
         if freeSpace < 100:
