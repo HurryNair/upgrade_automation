@@ -88,3 +88,11 @@ class SimpliVity:
 
     def GetOVCShutdownStatus(self, host_id):
         return self.doGet(self.url+'hosts/'+host_id+'/virtual_controller_shutdown_status')
+
+
+    def GetCluster(self, name=None):
+        if name:
+            url = self.url+'omnistack_clusters?show_optional_fields=true&name='+name
+        else:
+            url = self.url+'omnistack_clusters?show_optional_fields=true'
+        return self.doGet(url)

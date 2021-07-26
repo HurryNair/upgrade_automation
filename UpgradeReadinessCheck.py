@@ -62,7 +62,7 @@ if __name__ == "__main__":
     url = "https://"+ovc+"/api/"
     svt = SimpliVity(url)
 
-    log = logopen('logfile.txt')
+    log = logopen('logfile3.txt')
 
     logwriter(log, "Open Connection to SimpliVity")
     svt.Connect(svtuser, svtpassword)
@@ -113,6 +113,162 @@ if __name__ == "__main__":
                 logwriter(log, "VM storage high availability is not safe for VM" + vm['name'] + ". VM could go offline. Do not proceed.")
                     
     logclose(log)
+
+    report = open('report.html', 'w')
+    host_1 = "10.54.106.93"
+    html_template = r"""
+<!doctype html>
+<html lang="en">
+   <head>
+      <!-- Required meta tags -->
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+      <!-- Bootstrap CSS -->
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+      <title>Simplivity Pre-Upgrage Checklist Report</title>
+   </head>
+   <body>
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+         <a class="navbar-brand" href="#"><img classs="img-responsive" width="50px" height="" src="C:\Users\patenikh\Downloads\6.1-Ruby-Python\pythoncode\hpe.JPG">&nbsp; HPE Simplivity</a>
+         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+         <span class="navbar-toggler-icon"></span>
+         </button>
+         <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+            </ul>
+            <form class="form-inline my-2 my-lg-0">
+               <ul class="navbar-nav mr-auto">
+                  <li class="nav-item active">
+                     <a class="nav-link">Date: 23.07.2021 <span class="sr-only">(current)</span></a>
+                  </li>
+               </ul>
+            </form>
+         </div>
+      </nav>
+      <div class="message" id="message"></div>
+      <div class="container my-3">
+         <h2>
+            <center>
+            Simplivity Pre-Upgrade Check List
+         </h2>
+         <hr>
+         <h4>
+            <center>
+            Summary Report
+         </h4>
+         <div class="table">
+            <table class="table table-sm">
+               <thead>
+                  <tr>
+                     <th scope="col">Checklist</th>
+                     <th scope="col">Status</th>
+                  </tr>
+               </thead>
+               <tbody id="tablebody">
+                  <tr>
+                     <td>
+                        <b>Space usage on Individual nodes</b>
+                        <table class="table mb-0">
+                           <thead>
+                              <tr>
+                                 <td> &nbsp; Hostname-1</td>
+                                 <td>{}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; Free space</td>
+                                 <td>5551.907912666909 GB</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; Hostname-2</td>
+                                 <td>10.54.106.103</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; Free space</td>
+                                 <td>1000 GB</td>
+                              </tr>
+                           </thead>
+                        </table>
+                     </td>
+                     <td><button type="button" class="btn btn-success btn-sm"><b>PASSED</button></td>
+                  </tr>
+                  <tr>
+                     <td><b>Federation status & IP captures</b></td>
+                     <td><button type="button" class="btn btn-danger btn-sm"><b>FAILED</button></td>
+                  </tr>
+                  <tr>
+                     <td><b>ESXi Version</b></td>
+                     <td><button type="button" class="btn btn-danger btn-sm"><b>FAILED</button></td>
+                  </tr>
+                  <tr>
+                     <td><b>OVC Version</b></td>
+                     <td><button type="button" class="btn btn-success btn-sm"><b>PASSED</button></td>
+                  </tr>
+                  <tr>
+                     <td>
+                        <b>VCenter configuration & IP address</b>
+                        <table class="table mb-0">
+                           <thead>
+                              <tr>
+                                 <td> &nbsp; vCenter IP</td>
+                                 <td>10.54.110.150</td>
+                              </tr>
+                           </thead>
+                        </table>
+                     </td>
+                     <td><button type="button" class="btn btn-success btn-sm"><b>PASSED</button></td>
+                  </tr>
+                  <tr>
+                     <td>
+                        <b>Arbiter IP configuration</b>
+                        <table class="table mb-0">
+                           <thead>
+                              <tr>
+                                 <td> &nbsp; IP Address</td>
+                                 <td>10.54.110.220 </td>
+                              </tr>
+                           </thead>
+                        </table>
+                     </td>
+                     <td><button type="button" class="btn btn-success btn-sm"><b>PASSED</button></td>
+                  </tr>
+                  <tr>
+                     <td><b>Vswitch Configuration</b></td>
+                     <td><button type="button" class="btn btn-success btn-sm"><b>PASSED</button></td>
+                  </tr>
+                  <tr>
+                     <td><b>Plugin Status</b></td>
+                     <td><button type="button" class="btn btn-success btn-sm"><b>PASSED</button></td>
+                  </tr>
+                  <tr>
+                     <td><b>Local and Remote Backup Status</b></td>
+                     <td><button type="button" class="btn btn-success btn-sm"><b>PASSED</button></td>
+                  </tr>
+                  <tr>
+                     <td><b>Complete Physical Network topology</b></td>
+                     <td><button type="button" class="btn btn-danger btn-sm"><b>FAILED</button></td>
+                  </tr>
+                  <tr>
+                     <td><b>Hardware status</b></td>
+                     <td><button type="button" class="btn btn-success btn-sm"><b>PASSED</button></td>
+                  </tr>
+                  <tr>
+                     <td><b>ILO Information/Access</b></td>
+                     <td><button type="button" class="btn btn-danger btn-sm"><b>FAILED</button></td>
+                  </tr>
+               </tbody>
+            </table>
+         </div>
+      </div>
+      <!-- Optional JavaScript -->
+      <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+      <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+      <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+      <script type="text/javascript" src="app.js"></script>
+   </body>
+</html>""".format(host_1)
+    report.write(html_template)
+    report.close()
     # if ready:
     #    for host in hosts:
     #        svt.ShutdownOVC(host['id'])
