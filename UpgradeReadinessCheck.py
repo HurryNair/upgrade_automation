@@ -1,9 +1,10 @@
 from SimpliVityClass import *
 from datetime import datetime
+from jinja2 import Template
 
 BtoGB = pow(1024, 3)
 BtoMB = pow(1024, 2)
-    
+
 capacitymetric = [
     'allocated_capacity',
     'free_space',
@@ -17,41 +18,46 @@ capacitymetric = [
     'stored_virtual_machine_data'
 ]
 
+
 def getNodeCapacity(data):
-        ndata = {
-            'allocated_capacity': 0,
-            'free_space': 0,
-            'capacity_savings': 0,
-            'used_capacity': 0,
-            'used_logical_capacity': 0,
-            'local_backup_capacity': 0,
-            'remote_backup_capacity': 0,
-            'stored_compressed_data': 0,
-            'stored_uncompressed_data': 0,
-            'stored_virtual_machine_data': 0,
-            'compression_ratio': 0,
-            'deduplication_ratio': 0,
-            'efficiency_ratio': 0
-        }
-        for y in data:
-            if 'ratio' in y['name']:
-                ndata[y['name']] = y['data_points'][-1]['value']
-            else:
-                ndata[y['name']] = y['data_points'][-1]['value']/BtoGB
-        return ndata
+    ndata = {
+        'allocated_capacity': 0,
+        'free_space': 0,
+        'capacity_savings': 0,
+        'used_capacity': 0,
+        'used_logical_capacity': 0,
+        'local_backup_capacity': 0,
+        'remote_backup_capacity': 0,
+        'stored_compressed_data': 0,
+        'stored_uncompressed_data': 0,
+        'stored_virtual_machine_data': 0,
+        'compression_ratio': 0,
+        'deduplication_ratio': 0,
+        'efficiency_ratio': 0
+    }
+    for y in data:
+        if 'ratio' in y['name']:
+            ndata[y['name']] = y['data_points'][-1]['value']
+        else:
+            ndata[y['name']] = y['data_points'][-1]['value']/BtoGB
+    return ndata
+
 
 def logwriter(f, text):
-        output = str(datetime.today()) + ": "+text+" \n"
-        f.write(output)
+    output = str(datetime.today()) + ": "+text+" \n"
+    f.write(output)
+
 
 def logopen(filename):
-        f = open(filename, 'a+')
-        f.write(str(datetime.today())+": Session start \n")
-        return f
+    f = open(filename, 'a+')
+    f.write(str(datetime.today())+": Session start \n")
+    return f
+
 
 def logclose(f):
-        f.write(str(datetime.today())+": Session End \n")
-        f.close()        
+    f.write(str(datetime.today())+": Session End \n")
+    f.close()
+
 
 if __name__ == "__main__":
 
@@ -80,49 +86,59 @@ if __name__ == "__main__":
         logwriter(log, "Evaluating host " + host['name'])
         host_list.append(host['name'])
         host_version = host['version']
-        freeSpace = getNodeCapacity(svt.GetHostCapacity(host['name'])['metrics'])['free_space']
+        freeSpace = getNodeCapacity(svt.GetHostCapacity(
+            host['name'])['metrics'])['free_space']
         space_list.append(str(freeSpace) + " GB")
         map[host['id']] = [host['name']]
         map[host['id']].append(host['version'])
         map[host['id']].append(host['state'])
         if freeSpace < 100:
-            logwriter(log, "Hostname : " + host['name'] + " free space : " + str(freeSpace) + " GB")
+            logwriter(log, "Hostname : " +
+                      host['name'] + " free space : " + str(freeSpace) + " GB")
             logwriter(log, "Inufficient space for the upgrade")
         elif freeSpace >= 100:
-            logwriter(log, "Hostname : " + host['name'] + " free space : " + str(freeSpace) + " GB")
+            logwriter(log, "Hostname : " +
+                      host['name'] + " free space : " + str(freeSpace) + " GB")
             logwriter(log, "Sufficient space for the upgrade")
 
     clusters = svt.GetCluster()['omnistack_clusters']
 
     for cluster in clusters:
-        logwriter(log, "Evaluating cluster " + cluster['hypervisor_object_parent_name'])
+        logwriter(log, "Evaluating cluster " +
+                  cluster['hypervisor_object_parent_name'])
         logwriter(log, "Evaluating cluster members")
         if cluster['arbiter_connected']:
             arbiter_connected = "CONNECTED"
         if not cluster['arbiter_connected']:
             arbiter_connected = "DISCONNECTED"
         for member in cluster['members']:
-            logwriter(log, "Node " + map[member][0] + " software version : " + map[member][1])
-            logwriter(log, "Node " + map[member][0] + " status : " + map[member][2])
-            logwriter(log, "Node " + map[member][0] + " arbiter connectivity : " + arbiter_connected)
+            logwriter(log, "Node " + map[member][0] +
+                      " software version : " + map[member][1])
+            logwriter(log, "Node " + map[member]
+                      [0] + " status : " + map[member][2])
+            logwriter(log, "Node " + map[member][0] +
+                      " arbiter connectivity : " + arbiter_connected)
         logwriter(log, "Arbiter IP address : " + cluster['arbiter_address'])
         logwriter(log, "vCenter : " + cluster['hypervisor_management_system'])
-            
+
     vms = svt.GetVM()['virtual_machines']
-    
+
     for vm in vms:
         if vm['state'] == 'ALIVE':
             logwriter(log, "Evaluating VM " + vm['name'])
             vm_id = vm['id']
             vmha = svt.GetVMbyID(vm_id)['virtual_machine']['ha_status']
             if vmha == 'SAFE' and vm['ha_resynchronization_progress'] == 100 and len(vm['replica_set'] == 2):
-                logwriter(log, "VM storage high availability is safe for VM" + vm['name'])
+                logwriter(
+                    log, "VM storage high availability is safe for VM" + vm['name'])
             else:
-                logwriter(log, "VM storage high availability is not safe for VM" + vm['name'] + ". VM could go offline. Do not proceed.")
-                    
+                logwriter(log, "VM storage high availability is not safe for VM" +
+                          vm['name'] + ". VM could go offline. Do not proceed.")
+
     logclose(log)
 
     report = open('report.html', 'w')
+
     html_template = r"""
 <!doctype html>
 <html lang="en">
@@ -179,19 +195,19 @@ if __name__ == "__main__":
                            <thead>
                               <tr>
                                  <td> &nbsp; Hostname-1</td>
-                                 <td>{}</td>
+                                 <td>{{ hostname_1 }}</td>
                               </tr>
                               <tr>
                                  <td> &nbsp; Free space</td>
-                                 <td>{}</td>
+                                 <td>{{ freespace_1 }}</td>
                               </tr>
                               <tr>
                                  <td> &nbsp; Hostname-2</td>
-                                 <td>{}</td>
+                                 <td>{{ hostname_2 }}</td>
                               </tr>
                               <tr>
                                  <td> &nbsp; Free space</td>
-                                 <td>{}</td>
+                                 <td>{{ freespace_2 }}</td>
                               </tr>
                            </thead>
                         </table>
@@ -273,9 +289,20 @@ if __name__ == "__main__":
       <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
       <script type="text/javascript" src="app.js"></script>
    </body>
-</html>""".format(host_list[0], space_list[0], host_list[1], space_list[1])
-    report.write(html_template)
+</html>"""
+
+    data = {
+        "hostname_1": host_list[0],
+        "freespace_1": space_list[0],
+        "hostname_2": host_list[1],
+        "freespace_2": space_list[1]
+    }
+
+    j2_template = Template(html_template)
+
+    report.write(j2_template.render(data))
     report.close()
+
     # if ready:
     #    for host in hosts:
     #        svt.ShutdownOVC(host['id'])
@@ -284,7 +311,7 @@ if __name__ == "__main__":
     # Add logic to move check if OVC shutdown has completed & then let the user know
     # Add logic to then move the ESXi host into maintenance mode
     # DRS enabled in cluster?
-    
+
     # logfile ==> HTML
     # main heading
     # Space usage on individual nodes
