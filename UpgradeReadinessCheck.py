@@ -212,7 +212,10 @@ if __name__ == "__main__":
                            </thead>
                         </table>
                      </td>
+                     {% if freespace_1 >= 100 and freespace_2 >= 100 -%}
                      <td><button type="button" class="btn btn-success btn-sm"><b>PASSED</button></td>
+                     {% else -%}
+                     <td><button type="button" class="btn btn-danger btn-sm"><b>FAILED</button></td>
                   </tr>
                   <tr>
                      <td><b>Federation status & IP captures</b></td>
