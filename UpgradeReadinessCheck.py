@@ -285,73 +285,105 @@ if __name__ == "__main__":
                         <table class="table mb-0">
                            <thead>
                               <tr>
+                                 <td> &nbsp; Arbiter</td>
+                                 <td>{{ arbiter_ip }}</td>
+                              </tr>
+                              <tr>
                                  <td> &nbsp; Hostname-1</td>
                                  <td>{{ hostname_1 }}</td>
                               </tr>
                               <tr>
+                                 <td> &nbsp; vCenter IP</td>
+                                 <td>{{ vc_ip_1 }}</td>
+                              </tr>
+                              <tr>
                                  <td> &nbsp; Management IP</td>
                                  <td>{{ mgmt_ip_1 }}</td>
+                                 <td>{{ mgmt_ip_mtu_1 }} mtu</td>
                               </tr>
                               <tr>
                                  <td> &nbsp; Storage IP</td>
                                  <td>{{ stor_ip_1 }}</td>
+                                 <td>{{ stor_ip_mtu_1 }} mtu</td>
                               </tr>
                               <tr>
                                  <td> &nbsp; Federation IP</td>
                                  <td>{{ fed_ip_1 }}</td>
+                                 <td>{{ fed_ip_mtu_1 }} mtu</td>
                               </tr>
                               <tr>
                                  <td> &nbsp; Hostname-2</td>
                                  <td>{{ hostname_2 }}</td>
                               </tr>
                               <tr>
+                                 <td> &nbsp; vCenter IP</td>
+                                 <td>{{ vc_ip_2 }}</td>
+                              </tr>
+                              <tr>
                                  <td> &nbsp; Management IP</td>
                                  <td>{{ mgmt_ip_2 }}</td>
+                                 <td>{{ mgmt_ip_mtu_2 }} mtu</td>
                               </tr>
                               <tr>
                                  <td> &nbsp; Storage IP</td>
                                  <td>{{ stor_ip_2 }}</td>
+                                 <td>{{ stor_ip_mtu_2 }} mtu</td>
                               </tr>
                               <tr>
                                  <td> &nbsp; Federation IP</td>
                                  <td>{{ fed_ip_2 }}</td>
+                                 <td>{{ fed_ip_mtu_2 }} mtu</td>
                               </tr>
                               <tr>
                                  <td> &nbsp; Hostname-3</td>
                                  <td>{{ hostname_3 }}</td>
                               </tr>
                               <tr>
+                                 <td> &nbsp; vCenter IP</td>
+                                 <td>{{ vc_ip_3 }}</td>
+                              </tr>
+                              <tr>
                                  <td> &nbsp; Management IP</td>
                                  <td>{{ mgmt_ip_3 }}</td>
+                                 <td>{{ mgmt_ip_mtu_3 }} mtu</td>
                               </tr>
                               <tr>
                                  <td> &nbsp; Storage IP</td>
                                  <td>{{ stor_ip_3 }}</td>
+                                 <td>{{ stor_ip_mtu_3 }} mtu</td>
                               </tr>
                               <tr>
                                  <td> &nbsp; Federation IP</td>
                                  <td>{{ fed_ip_3 }}</td>
+                                 <td>{{ fed_ip_mtu_3 }} mtu</td>
                               </tr>
                               <tr>
                                  <td> &nbsp; Hostname-4</td>
                                  <td>{{ hostname_4 }}</td>
                               </tr>
                               <tr>
+                                 <td> &nbsp; vCenter IP</td>
+                                 <td>{{ vc_ip_4 }}</td>
+                              </tr>
+                              <tr>
                                  <td> &nbsp; Management IP</td>
                                  <td>{{ mgmt_ip_4 }}</td>
+                                 <td>{{ mgmt_ip_mtu_4 }} mtu</td>
                               </tr>
                               <tr>
                                  <td> &nbsp; Storage IP</td>
                                  <td>{{ stor_ip_4 }}</td>
+                                 <td>{{ stor_ip_mtu_4 }} mtu</td>
                               </tr>
                               <tr>
                                  <td> &nbsp; Federation IP</td>
                                  <td>{{ fed_ip_4 }}</td>
+                                 <td>{{ fed_ip_mtu_4 }} mtu</td>
                               </tr>
                            </thead>
                         </table>
                      </td>
-                     <td><button type="button" class="btn btn-danger btn-sm"><b>FAILED</button></td>
+                     <td><button type="button" class="btn btn-success btn-sm"><b>PASSED</button></td>
                   </tr>
                   <tr>
                      <td><b>ESXi Version</b></td>
@@ -362,32 +394,7 @@ if __name__ == "__main__":
                      <td><button type="button" class="btn btn-success btn-sm"><b>PASSED</button></td>
                   </tr>
                   <tr>
-                     <td>
-                        <b>VCenter configuration & IP address</b>
-                        <table class="table mb-0">
-                           <thead>
-                              <tr>
-                                 <td> &nbsp; vCenter IP</td>
-                                 <td>10.54.110.150</td>
-                              </tr>
-                           </thead>
-                        </table>
-                     </td>
-                     <td><button type="button" class="btn btn-success btn-sm"><b>PASSED</button></td>
-                  </tr>
-                  <tr>
-                     <td>
-                        <b>Arbiter IP configuration</b>
-                        <table class="table mb-0">
-                           <thead>
-                              <tr>
-                                 <td> &nbsp; IP Address</td>
-                                 <td>10.54.110.220 </td>
-                              </tr>
-                           </thead>
-                        </table>
-                     </td>
-                     <td><button type="button" class="btn btn-success btn-sm"><b>PASSED</button></td>
+                     <td>{{ ovc_version }}</td>
                   </tr>
                   <tr>
                      <td><b>Vswitch Configuration</b></td>
@@ -427,6 +434,7 @@ if __name__ == "__main__":
 </html>"""
 
     data = {
+        "arbiter_ip" : arbiter_ip,
         "hostname_1": host_list[0],
         "freespace_1": space_list_int[0],
         "hostname_2": host_list[1],
@@ -437,21 +445,38 @@ if __name__ == "__main__":
         "freespace_4": space_list_int[3],
         "federation_health": federation_health,
         "hostname_1": host_list[0],
+        "vc_ip_1" : vc_ip_list[0],
         "mgmt_ip_1" : mgmt_ip_list[0],
+        "mgmt_ip_mtu_1" : mgmt_ip_mtu[0],
         "stor_ip_1" : stor_ip_list[0],
+        "stor_ip_mtu_1" : stor_ip_mtu[0],
         "fed_ip_1" : fed_ip_list[0],
+        "fed_ip_mtu_1" : fed_ip_mtu[0],
         "hostname_2": host_list[1],
+        "vc_ip_2" : vc_ip_list[1],
         "mgmt_ip_2" : mgmt_ip_list[1],
+        "mgmt_ip_mtu_2" : mgmt_ip_mtu[1],
         "stor_ip_2" : stor_ip_list[1],
+        "stor_ip_mtu_2" : stor_ip_mtu[1],
         "fed_ip_2" : fed_ip_list[1],
+        "fed_ip_mtu_2" : fed_ip_mtu[1],
         "hostname_3": host_list[2],
+        "vc_ip_3" : vc_ip_list[2],
         "mgmt_ip_3" : mgmt_ip_list[2],
+        "mgmt_ip_mtu_3" : mgmt_ip_mtu[2],
         "stor_ip_3" : stor_ip_list[2],
+        "stor_ip_mtu_3" : stor_ip_mtu[2],
         "fed_ip_3" : fed_ip_list[2],
+        "fed_ip_mtu_3" : fed_ip_mtu[2],
         "hostname_4": host_list[3],
+        "vc_ip_4" : vc_ip_list[3],
         "mgmt_ip_4" : mgmt_ip_list[3],
+        "mgmt_ip_mtu_4" : mgmt_ip_mtu[3],
         "stor_ip_4" : stor_ip_list[3],
-        "fed_ip_4" : fed_ip_list[3]
+        "stor_ip_mtu_4" : stor_ip_mtu[3],
+        "fed_ip_4" : fed_ip_list[3],
+        "fed_ip_mtu_4" : fed_ip_mtu[3],
+        "ovc_version" : host_version,
     }
 
     j2_template = Template(html_template)
