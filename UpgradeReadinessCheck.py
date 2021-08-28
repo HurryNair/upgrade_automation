@@ -78,6 +78,7 @@ if __name__ == "__main__":
 
     host_list = []
     space_list = []
+    space_list_int = []
     host_version = []
 
     map = {}
@@ -89,6 +90,7 @@ if __name__ == "__main__":
         freeSpace = getNodeCapacity(svt.GetHostCapacity(
             host['name'])['metrics'])['free_space']
         space_list.append(str(freeSpace) + " GB")
+        space_list_int.append(freeSpace)
         map[host['id']] = [host['name']]
         map[host['id']].append(host['version'])
         map[host['id']].append(host['state'])
@@ -128,7 +130,7 @@ if __name__ == "__main__":
             logwriter(log, "Evaluating VM " + vm['name'])
             vm_id = vm['id']
             vmha = svt.GetVMbyID(vm_id)['virtual_machine']['ha_status']
-            if vmha == 'SAFE' and vm['ha_resynchronization_progress'] == 100 and len(vm['replica_set'] == 2):
+            if vmha == 'SAFE':
                 logwriter(
                     log, "VM storage high availability is safe for VM" + vm['name'])
             else:
@@ -142,6 +144,7 @@ if __name__ == "__main__":
     html_template = r"""
 <!doctype html>
 <html lang="en">
+
    <head>
       <!-- Required meta tags -->
       <meta charset="utf-8">
@@ -150,15 +153,20 @@ if __name__ == "__main__":
       <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
       <title>Simplivity Pre-Upgrage Checklist Report</title>
    </head>
+
    <body>
       <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+         
          <a class="navbar-brand" href="#"><img classs="img-responsive" width="50px" height="" src="C:\Users\patenikh\Downloads\6.1-Ruby-Python\pythoncode\hpe.JPG">&nbsp; HPE Simplivity</a>
+         
          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
          <span class="navbar-toggler-icon"></span>
          </button>
+         
          <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
             </ul>
+            
             <form class="form-inline my-2 my-lg-0">
                <ul class="navbar-nav mr-auto">
                   <li class="nav-item active">
@@ -167,6 +175,7 @@ if __name__ == "__main__":
                </ul>
             </form>
          </div>
+      
       </nav>
       <div class="message" id="message"></div>
       <div class="container my-3">
@@ -212,10 +221,11 @@ if __name__ == "__main__":
                            </thead>
                         </table>
                      </td>
-                     {% if freespace_1 >= 100 and freespace_2 >= 100 -%}
+                     {% if freespace_1 >= 100 and freespace_2 >= 100 %}
                      <td><button type="button" class="btn btn-success btn-sm"><b>PASSED</button></td>
-                     {% else -%}
+                     {% else %}
                      <td><button type="button" class="btn btn-danger btn-sm"><b>FAILED</button></td>
+                     {% endif %}
                   </tr>
                   <tr>
                      <td><b>Federation status & IP captures</b></td>
@@ -296,15 +306,16 @@ if __name__ == "__main__":
 
     data = {
         "hostname_1": host_list[0],
-        "freespace_1": space_list[0],
+        "freespace_1": space_list_int[0],
         "hostname_2": host_list[1],
-        "freespace_2": space_list[1]
+        "freespace_2": space_list_int[1]
     }
 
     j2_template = Template(html_template)
 
     report.write(j2_template.render(data))
-    report.close()
+    report.close()    
+
 
     # if ready:
     #    for host in hosts:
