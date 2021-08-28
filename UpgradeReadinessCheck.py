@@ -81,6 +81,16 @@ if __name__ == "__main__":
     space_list_int = []
     host_version = []
 
+    mgmt_ip_list = []
+    fed_ip_list = []
+    stor_ip_list = []
+
+    mgmt_ip_mtu = []
+    fed_ip_mtu =[]
+    stor_ip_mtu =[]
+
+    vc_ip_list = []
+
     federation_health = True
 
     map = {}
@@ -89,6 +99,17 @@ if __name__ == "__main__":
         logwriter(log, "Evaluating host " + host['name'])
         host_list.append(host['name'])
         host_version = host['version']
+
+        mgmt_ip_list.append(host['management_ip'])
+        fed_ip_list.append(host['federation_ip'])
+        stor_ip_list.append(host['storage_ip'])
+
+        mgmt_ip_mtu.append(host['management_mtu'])
+        fed_ip_mtu.append(host['federation_mtu'])
+        stor_ip_mtu.append(host['storage_mtu'])
+
+        vc_ip_list.append(host['hypervisor_management_system'])
+
         freeSpace = getNodeCapacity(svt.GetHostCapacity(
             host['name'])['metrics'])['free_space']
         space_list.append(str(freeSpace) + " GB")
@@ -110,6 +131,7 @@ if __name__ == "__main__":
     clusters = svt.GetCluster()['omnistack_clusters']
 
     for cluster in clusters:
+        arbiter_ip = cluster['arbiter_address'] # stores only last evaluated cluster arbiter IP
         logwriter(log, "Evaluating cluster " +
                   cluster['hypervisor_object_parent_name'])
         logwriter(log, "Evaluating cluster members")
@@ -125,7 +147,7 @@ if __name__ == "__main__":
                       [0] + " status : " + map[member][2])
             logwriter(log, "Node " + map[member][0] +
                       " arbiter connectivity : " + arbiter_connected)
-        logwriter(log, "Arbiter IP address : " + cluster['arbiter_address'])
+        logwriter(log, "Arbiter IP address : " + arbiter_ip)
         logwriter(log, "vCenter : " + cluster['hypervisor_management_system'])
 
     vms = svt.GetVM()['virtual_machines']
@@ -213,7 +235,7 @@ if __name__ == "__main__":
                               </tr>
                               <tr>
                                  <td> &nbsp; Free space</td>
-                                 <td>{{ freespace_1 }}</td>
+                                 <td>{{ freespace_1 }} GB</td>
                               </tr>
                               <tr>
                                  <td> &nbsp; Hostname-2</td>
@@ -221,25 +243,115 @@ if __name__ == "__main__":
                               </tr>
                               <tr>
                                  <td> &nbsp; Free space</td>
-                                 <td>{{ freespace_2 }}</td>
+                                 <td>{{ freespace_2 }} GB</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; Hostname-3</td>
+                                 <td>{{ hostname_3 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; Free space</td>
+                                 <td>{{ freespace_3 }} GB</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; Hostname-4</td>
+                                 <td>{{ hostname_4 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; Free space</td>
+                                 <td>{{ freespace_4 }} GB</td>
                               </tr>
                            </thead>
                         </table>
                      </td>
-                     {% if freespace_1 >= 100 and freespace_2 >= 100 %}
+                     {% if freespace_1 >= 100 and freespace_2 >= 100 and freespace_3 >= 100 and freespace_4 >= 100 %}
                      <td><button type="button" class="btn btn-success btn-sm"><b>PASSED</button></td>
                      {% else %}
                      <td><button type="button" class="btn btn-danger btn-sm"><b>FAILED</button></td>
                      {% endif %}
                   </tr>
                   <tr>
-                     <td><b>Federation status & IP captures</b></td>
+                     <td><b>Federation health</td>
                      {{ federation_health }}
                      {% if federation_health %}
                      <td><button type="button" class="btn btn-success btn-sm"><b>PASSED</button></td>
                      {% else %}
                      <td><button type="button" class="btn btn-danger btn-sm"><b>FAILED</button></td>
                      {% endif %}
+                  </tr>
+                  <tr>
+                     <td>
+                     <b>IP captures</b>
+                        <table class="table mb-0">
+                           <thead>
+                              <tr>
+                                 <td> &nbsp; Hostname-1</td>
+                                 <td>{{ hostname_1 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; Management IP</td>
+                                 <td>{{ mgmt_ip_1 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; Storage IP</td>
+                                 <td>{{ stor_ip_1 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; Federation IP</td>
+                                 <td>{{ fed_ip_1 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; Hostname-2</td>
+                                 <td>{{ hostname_2 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; Management IP</td>
+                                 <td>{{ mgmt_ip_2 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; Storage IP</td>
+                                 <td>{{ stor_ip_2 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; Federation IP</td>
+                                 <td>{{ fed_ip_2 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; Hostname-3</td>
+                                 <td>{{ hostname_3 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; Management IP</td>
+                                 <td>{{ mgmt_ip_3 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; Storage IP</td>
+                                 <td>{{ stor_ip_3 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; Federation IP</td>
+                                 <td>{{ fed_ip_3 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; Hostname-4</td>
+                                 <td>{{ hostname_4 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; Management IP</td>
+                                 <td>{{ mgmt_ip_4 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; Storage IP</td>
+                                 <td>{{ stor_ip_4 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; Federation IP</td>
+                                 <td>{{ fed_ip_4 }}</td>
+                              </tr>
+                           </thead>
+                        </table>
+                     </td>
+                     <td><button type="button" class="btn btn-danger btn-sm"><b>FAILED</button></td>
                   </tr>
                   <tr>
                      <td><b>ESXi Version</b></td>
@@ -319,7 +431,27 @@ if __name__ == "__main__":
         "freespace_1": space_list_int[0],
         "hostname_2": host_list[1],
         "freespace_2": space_list_int[1],
-        "federation_health": federation_health
+        "hostname_3": host_list[2],
+        "freespace_3": space_list_int[2],
+        "hostname_4": host_list[3],
+        "freespace_4": space_list_int[3],
+        "federation_health": federation_health,
+        "hostname_1": host_list[0],
+        "mgmt_ip_1" : mgmt_ip_list[0],
+        "stor_ip_1" : stor_ip_list[0],
+        "fed_ip_1" : fed_ip_list[0],
+        "hostname_2": host_list[1],
+        "mgmt_ip_2" : mgmt_ip_list[1],
+        "stor_ip_2" : stor_ip_list[1],
+        "fed_ip_2" : fed_ip_list[1],
+        "hostname_3": host_list[2],
+        "mgmt_ip_3" : mgmt_ip_list[2],
+        "stor_ip_3" : stor_ip_list[2],
+        "fed_ip_3" : fed_ip_list[2],
+        "hostname_4": host_list[3],
+        "mgmt_ip_4" : mgmt_ip_list[3],
+        "stor_ip_4" : stor_ip_list[3],
+        "fed_ip_4" : fed_ip_list[3]
     }
 
     j2_template = Template(html_template)
