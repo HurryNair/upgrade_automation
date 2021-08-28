@@ -81,6 +81,8 @@ if __name__ == "__main__":
     space_list_int = []
     host_version = []
 
+    federation_health = True
+
     map = {}
 
     for host in hosts:
@@ -94,6 +96,8 @@ if __name__ == "__main__":
         map[host['id']] = [host['name']]
         map[host['id']].append(host['version'])
         map[host['id']].append(host['state'])
+        if host['state'] != "ALIVE":
+           federation_health  = False
         if freeSpace < 100:
             logwriter(log, "Hostname : " +
                       host['name'] + " free space : " + str(freeSpace) + " GB")
@@ -112,6 +116,7 @@ if __name__ == "__main__":
         if cluster['arbiter_connected']:
             arbiter_connected = "CONNECTED"
         if not cluster['arbiter_connected']:
+            federation_health = False
             arbiter_connected = "DISCONNECTED"
         for member in cluster['members']:
             logwriter(log, "Node " + map[member][0] +
@@ -229,7 +234,12 @@ if __name__ == "__main__":
                   </tr>
                   <tr>
                      <td><b>Federation status & IP captures</b></td>
+                     {{ federation_health }}
+                     {% if federation_health %}
+                     <td><button type="button" class="btn btn-success btn-sm"><b>PASSED</button></td>
+                     {% else %}
                      <td><button type="button" class="btn btn-danger btn-sm"><b>FAILED</button></td>
+                     {% endif %}
                   </tr>
                   <tr>
                      <td><b>ESXi Version</b></td>
@@ -308,7 +318,8 @@ if __name__ == "__main__":
         "hostname_1": host_list[0],
         "freespace_1": space_list_int[0],
         "hostname_2": host_list[1],
-        "freespace_2": space_list_int[1]
+        "freespace_2": space_list_int[1],
+        "federation_health": federation_health
     }
 
     j2_template = Template(html_template)
