@@ -18,7 +18,6 @@ capacitymetric = [
     'stored_virtual_machine_data'
 ]
 
-
 def getNodeCapacity(data):
     ndata = {
         'allocated_capacity': 0,
@@ -91,7 +90,9 @@ if __name__ == "__main__":
 
     vc_ip_list = []
 
-    federation_health = True
+    federation_health = True # Given that every host is alive and every cluster is arbiter connected
+
+    host_hardware_list = []
 
     map = {}
 
@@ -100,6 +101,8 @@ if __name__ == "__main__":
         host_list.append(host['name'])
         host_version = host['version']
 
+        host_hardware_list.append(svt.GetHostHardware(host['name']))
+        
         mgmt_ip_list.append(host['management_ip'])
         fed_ip_list.append(host['federation_ip'])
         stor_ip_list.append(host['storage_ip'])
@@ -127,6 +130,35 @@ if __name__ == "__main__":
             logwriter(log, "Hostname : " +
                       host['name'] + " free space : " + str(freeSpace) + " GB")
             logwriter(log, "Sufficient space for the upgrade")
+
+    # host_hardware_health = True
+    
+    host_name_list = []
+    host_status_list = []
+    raid_card_name_list = []
+    raid_card_firmware_list = []
+    raid_card_status_list = []
+    battery_manufacturer_list = [] #manufacturer changed to percent charged
+    battery_health_list = []
+    accelerator_card_firmware_list = []
+    accelerator_card_health_list = []
+    ld_name_list = []
+    ld_health = []
+    cache_health_list = []
+    for host in host_hardware_list:
+       host_name_list.append(host['host']['name'])
+       host_status_list.append(host['host']['status'])
+       raid_card_name_list.append(host['host']['raid_card']['product_name'])
+       raid_card_firmware_list.append(host['host']['raid_card']['firmware_revision'])
+       raid_card_status_list.append(host['host']['raid_card']['status'])
+       battery_manufacturer_list.append(host['host']['battery']['percent_charged']) #manufacturer changed to percent charged
+       battery_health_list.append(host['host']['battery']['health'])
+       accelerator_card_firmware_list.append(host['host']['accelerator_card']['firmware_revision'])
+       accelerator_card_health_list.append(host['host']['accelerator_card']['status'])
+       for ld in (host['host']['logical_drives']):
+          ld_name_list.append(ld['name'])
+          ld_health.append(ld['status'])
+          cache_health_list.append(ld['health'])
 
     clusters = svt.GetCluster()['omnistack_clusters']
 
@@ -271,13 +303,17 @@ if __name__ == "__main__":
                      {% endif %}
                   </tr>
                   <tr>
-                     <td><b>Federation health</td>
+                     <td><b>Federation health<b></td>
                      {{ federation_health }}
                      {% if federation_health %}
                      <td><button type="button" class="btn btn-success btn-sm"><b>PASSED</button></td>
                      {% else %}
                      <td><button type="button" class="btn btn-danger btn-sm"><b>FAILED</button></td>
                      {% endif %}
+                  </tr>
+                  <tr>
+                     <td><b>Storage High Availability<b></td>
+                     <td><button type="button" class="btn btn-success btn-sm"><b>PASSED</button></td>
                   </tr>
                   <tr>
                      <td>
@@ -383,11 +419,6 @@ if __name__ == "__main__":
                            </thead>
                         </table>
                      </td>
-                     <td><button type="button" class="btn btn-success btn-sm"><b>PASSED</button></td>
-                  </tr>
-                  <tr>
-                     <td><b>ESXi Version</b></td>
-                     <td><button type="button" class="btn btn-danger btn-sm"><b>FAILED</button></td>
                   </tr>
                   <tr>
                      <td><b>OVC Version</b></td>
@@ -397,28 +428,225 @@ if __name__ == "__main__":
                      <td>{{ ovc_version }}</td>
                   </tr>
                   <tr>
-                     <td><b>Vswitch Configuration</b></td>
+                     <td>
+                        <b>Hardware status</b>
+                        <table class="table mb-0">
+                           <thead>
+
+
+
+                              <tr>
+                                 <td> &nbsp; <b>Hostname<b></td>
+                                 <td><b>{{ hostname_1 }}<b></td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; Host Status</td>
+                                 <td>{{ host_status_1 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; RAID card name</td>
+                                 <td>{{ raid_card_name_1 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; RAID card firmware</td>
+                                 <td>{{ raid_card_fw_1 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; RAID card status</td>
+                                 <td>{{ raid_card_status_1 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; Battery Percent</td>
+                                 <td>{{ battery_manufacturer_1 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; Battery Health</td>
+                                 <td>{{ battery_health_1 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; Accelerator card firmware</td>
+                                 <td>{{ acc_fw_1 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; Accelerator card status</td>
+                                 <td>{{ acc_st_1 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; Logical drive name</td>
+                                 <td>{{ ld_name_1 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; Logical health</td>
+                                 <td>{{ ld_health_1 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; Cache health</td>
+                                 <td>{{ cache_health_1 }}</td>
+                              </tr>
+
+
+
+                              <tr>
+                                 <td> &nbsp; <b>Hostname<b></td>
+                                 <td><b>{{ hostname_1 }}<b></td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; Host Status</td>
+                                 <td>{{ host_status_2 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; RAID card name</td>
+                                 <td>{{ raid_card_name_2 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; RAID card firmware</td>
+                                 <td>{{ raid_card_fw_2 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; RAID card status</td>
+                                 <td>{{ raid_card_status_2 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; Battery Percent</td>
+                                 <td>{{ battery_manufacturer_2 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; Battery Health</td>
+                                 <td>{{ battery_health_2 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; Accelerator card firmware</td>
+                                 <td>{{ acc_fw_2 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; Accelerator card status</td>
+                                 <td>{{ acc_st_2 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; Logical drive name</td>
+                                 <td>{{ ld_name_2 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; Logical health</td>
+                                 <td>{{ ld_health_2 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; Cache health</td>
+                                 <td>{{ cache_health_2 }}</td>
+                              </tr>
+
+
+
+
+
+                              <tr>
+                                 <td> &nbsp; <b>Hostname<b></td>
+                                 <td><b>{{ hostname_3 }}<b></td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; Host Status</td>
+                                 <td>{{ host_status_3 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; RAID card name</td>
+                                 <td>{{ raid_card_name_3 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; RAID card firmware</td>
+                                 <td>{{ raid_card_fw_3 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; RAID card status</td>
+                                 <td>{{ raid_card_status_3 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; Battery Percent</td>
+                                 <td>{{ battery_manufacturer_3 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; Battery Health</td>
+                                 <td>{{ battery_health_3 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; Accelerator card firmware</td>
+                                 <td>{{ acc_fw_3 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; Accelerator card status</td>
+                                 <td>{{ acc_st_3 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; Logical drive name</td>
+                                 <td>{{ ld_name_2 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; Logical health</td>
+                                 <td>{{ ld_health_2 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; Cache health</td>
+                                 <td>{{ cache_health_2 }}</td>
+                              </tr>
+
+
+
+
+
+
+                              <tr>
+                                 <td> &nbsp; <b>Hostname<b></td>
+                                 <td><b>{{ hostname_4 }}<b></td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; Host Status</td>
+                                 <td>{{ host_status_4 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; RAID card name</td>
+                                 <td>{{ raid_card_name_4 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; RAID card firmware</td>
+                                 <td>{{ raid_card_fw_4 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; RAID card status</td>
+                                 <td>{{ raid_card_status_4 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; Battery Percent</td>
+                                 <td>{{ battery_manufacturer_4 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; Battery Health</td>
+                                 <td>{{ battery_health_4 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; Accelerator card firmware</td>
+                                 <td>{{ acc_fw_4 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; Accelerator card status</td>
+                                 <td>{{ acc_st_4 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; Logical drive name</td>
+                                 <td>{{ ld_name_2 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; Logical health</td>
+                                 <td>{{ ld_health_2 }}</td>
+                              </tr>
+                              <tr>
+                                 <td> &nbsp; Cache health</td>
+                                 <td>{{ cache_health_2 }}</td>
+                              </tr>
+
+
+                           </thead>
+                        </table>
+                     </td>
                      <td><button type="button" class="btn btn-success btn-sm"><b>PASSED</button></td>
-                  </tr>
-                  <tr>
-                     <td><b>Plugin Status</b></td>
-                     <td><button type="button" class="btn btn-success btn-sm"><b>PASSED</button></td>
-                  </tr>
-                  <tr>
-                     <td><b>Local and Remote Backup Status</b></td>
-                     <td><button type="button" class="btn btn-success btn-sm"><b>PASSED</button></td>
-                  </tr>
-                  <tr>
-                     <td><b>Complete Physical Network topology</b></td>
-                     <td><button type="button" class="btn btn-danger btn-sm"><b>FAILED</button></td>
-                  </tr>
-                  <tr>
-                     <td><b>Hardware status</b></td>
-                     <td><button type="button" class="btn btn-success btn-sm"><b>PASSED</button></td>
-                  </tr>
-                  <tr>
-                     <td><b>ILO Information/Access</b></td>
-                     <td><button type="button" class="btn btn-danger btn-sm"><b>FAILED</button></td>
                   </tr>
                </tbody>
             </table>
@@ -477,6 +705,59 @@ if __name__ == "__main__":
         "fed_ip_4" : fed_ip_list[3],
         "fed_ip_mtu_4" : fed_ip_mtu[3],
         "ovc_version" : host_version,
+
+
+        "hostname_1" : host_name_list[0],
+        "host_status_1" : host_status_list[0],
+        "raid_card_name_1" : raid_card_name_list[0],
+        "raid_card_fw_1" : raid_card_firmware_list[0],
+        "raid_card_status_1" : raid_card_status_list[0],
+        "battery_manufacturer_1" : battery_manufacturer_list[0],
+        "battery_health_1" : battery_health_list[0],
+        "acc_fw_1" : accelerator_card_firmware_list[0],
+        "acc_st_1" : accelerator_card_health_list[0],
+        "ld_name_1" : ld_name_list[0],
+        "ld_health_1" : ld_health[0],
+        "cache_health_1" : cache_health_list[0],
+
+        "hostname_2" : host_name_list[1],
+        "host_status_2" : host_status_list[1],
+        "raid_card_name_2" : raid_card_name_list[1],
+        "raid_card_fw_2" : raid_card_firmware_list[1],
+        "raid_card_status_2" : raid_card_status_list[1],
+        "battery_manufacturer_2" : battery_manufacturer_list[1],
+        "battery_health_2" : battery_health_list[1],
+        "acc_fw_2" : accelerator_card_firmware_list[1],
+        "acc_st_2" : accelerator_card_health_list[1],
+        "ld_name_2" : ld_name_list[1],
+        "ld_health_2" : ld_health[1],
+        "cache_health_2" : cache_health_list[1],
+
+        "hostname_3" : host_name_list[2],
+        "host_status_3" : host_status_list[2],
+        "raid_card_name_3" : raid_card_name_list[2],
+        "raid_card_fw_3" : raid_card_firmware_list[2],
+        "raid_card_status_3" : raid_card_status_list[2],
+        "battery_manufacturer_3" : battery_manufacturer_list[2],
+        "battery_health_3" : battery_health_list[2],
+        "acc_fw_3" : accelerator_card_firmware_list[2],
+        "acc_st_3" : accelerator_card_health_list[2],
+        "ld_name_3" : ld_name_list[2],
+        "ld_health_3" : ld_health[2],
+        "cache_health_3" : cache_health_list[2],
+
+        "hostname_4" : host_name_list[3],
+        "host_status_4" : host_status_list[3],
+        "raid_card_name_4" : raid_card_name_list[3],
+        "raid_card_fw_4" : raid_card_firmware_list[3],
+        "raid_card_status_4" : raid_card_status_list[3],
+        "battery_manufacturer_4" : battery_manufacturer_list[3],
+        "battery_health_4" : battery_health_list[3],
+        "acc_fw_4" : accelerator_card_firmware_list[3],
+        "acc_st_4" : accelerator_card_health_list[3],
+        "ld_name_4" : ld_name_list[3],
+        "ld_health_4" : ld_health[3],
+        "cache_health_4" : cache_health_list[3],
     }
 
     j2_template = Template(html_template)
@@ -494,9 +775,11 @@ if __name__ == "__main__":
     # Add logic to then move the ESXi host into maintenance mode
     # DRS enabled in cluster?
 
-    # logfile ==> HTML
-    # main heading
-    # Space usage on individual nodes
-    # Table
-    # Cluster details
-    # Represent nodes & all of its details
+
+
+    # To do
+    # Pass or fail VM Storage High availability health
+    # Pass OVC version test if all OVC versions match
+    # Pass hardware status if all health and status items are green/healthy
+    # IP captures is not a test
+    # Final logic to pass or fail setup for upgrade

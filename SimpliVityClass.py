@@ -96,3 +96,7 @@ class SimpliVity:
         else:
             url = self.url+'omnistack_clusters?show_optional_fields=true'
         return self.doGet(url)
+
+    def GetHostHardware(self, name):
+        url = self.url+'hosts/'+self.GetHostId(name)+'/hardware'
+        return self.doGet(url)
